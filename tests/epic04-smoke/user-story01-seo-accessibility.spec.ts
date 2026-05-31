@@ -1,15 +1,6 @@
 import { HomePage } from "../../pages/HomePage";
 import { test, expect } from "../../utilities/UITestUtils";
 
-/**
- * EPIC-04 | Smoke Suite — SEO, Accessibility, Security
- *
- * These tests go beyond functional checks. For a revenue-critical financial
- * platform like Empower, quality means: correct metadata, accessible markup,
- * and no accidental exposure of server internals. This mirrors the type of
- * validation I applied to mortgage workflows at Fannie Mae and the security
- * testing I performed on API endpoints at Blink Health.
- */
 
 test.describe("EPIC-04 | Smoke | SEO @smoke @seo", () => {
 

@@ -2,12 +2,10 @@ import { HomePage } from "../../pages/HomePage";
 import { test, expect } from "../../utilities/UITestUtils";
 
 test.describe("EPIC-01 | Home Page | Footer Links @homepage @regression", () => {
-
   let homePage: HomePage;
 
   test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
-    
   });
 
   test("TC-06 | Footer Privacy link is visible", async ({ page }) => {
@@ -15,7 +13,9 @@ test.describe("EPIC-01 | Home Page | Footer Links @homepage @regression", () => 
     await expect(homePage.footerPrivacyLink).toBeVisible();
   });
 
-  test("TC-07 | Footer Privacy link navigates to /privacy", async ({ page }) => {
+  test("TC-07 | Footer Privacy link navigates to /privacy", async ({
+    page,
+  }) => {
     await homePage.clickFooterPrivacy();
     await expect(page).toHaveURL(/privacy/);
   });
@@ -29,5 +29,4 @@ test.describe("EPIC-01 | Home Page | Footer Links @homepage @regression", () => 
     await homePage.footerAboutLink.scrollIntoViewIfNeeded();
     await expect(homePage.footerAboutLink).toBeVisible();
   });
-
 });
