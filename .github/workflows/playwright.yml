@@ -17,14 +17,17 @@ jobs:
     name: Static Checks (offline spec discovery)
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - run: npm ci
+
+      - name: Type-check (tsc --noEmit)
+        run: npm run typecheck
 
       # `--list` parses every spec, resolves imports and page objects, and
       # evaluates the environment switch in utilities/UITestUtils.ts. It starts
@@ -35,3 +38,31 @@ jobs:
           evn: qa
           QA_URL: http://localhost.invalid
         run: npx playwright test --list --reporter=list
+
+      # Fails if test coverage changes unexpectedly, e.g. a spec stops loading or
+      # a tag is dropped. When tests are added or removed on purpose, update the
+      # EXPECTED_* values below in the same commit.
+      - name: Guard test inventory
+        env:
+          evn: qa
+          QA_URL: http://localhost.invalid
+          EXPECTED_ALL: "Total: 31 tests in 6 files"
+          EXPECTED_SMOKE: "Total: 22 tests in 4 files"
+          EXPECTED_REGRESSION: "Total: 9 tests in 2 files"
+        run: |
+          failed=0
+          check() {
+            local label="$1" expected="$2"; shift 2
+            local actual
+            actual=$(npx playwright test --list --reporter=list "$@" | grep '^Total: ' || true)
+            if [ "$actual" = "$expected" ]; then
+              echo "$label: $actual"
+            else
+              echo "::error::$label inventory changed. Expected '$expected', got '${actual:-no tests found}'"
+              failed=1
+            fi
+          }
+          check "All tests"   "$EXPECTED_ALL"
+          check "@smoke"      "$EXPECTED_SMOKE"      --grep @smoke
+          check "@regression" "$EXPECTED_REGRESSION" --grep @regression
+          exit "$failed"
