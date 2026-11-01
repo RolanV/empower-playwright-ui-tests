@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { resolveBaseURL } from './utilities/environment';
 
 dotenv.config();
 
@@ -11,6 +12,8 @@ export default defineConfig({
   workers: 4,
   reporter: 'html',
   use: {
+    // Selected by evn (qa | stg | uat) from QA_URL, STG_URL or UAT_URL.
+    baseURL: resolveBaseURL(process.env),
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

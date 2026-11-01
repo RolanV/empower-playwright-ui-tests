@@ -14,31 +14,31 @@ function expectSuccessfulResponse(response: Response | null, path: string): void
 test.describe("EPIC-02 | Navigation | Page Routing @navigation @regression", () => {
 
   test("TC-13 | /tools page loads successfully", async ({ page }) => {
-    const response = await page.goto(process.env.QA_URL + "/tools");
+    const response = await page.goto("./tools");
     expectSuccessfulResponse(response, "/tools");
     await expect(page).toHaveTitle(/Empower/);
   });
 
   test("TC-14 | /about-us page loads successfully", async ({ page }) => {
-    const response = await page.goto(process.env.QA_URL + "/about-us");
+    const response = await page.goto("./about-us");
     expectSuccessfulResponse(response, "/about-us");
     await expect(page).toHaveTitle(/Empower/);
   });
 
   test("TC-15 | /contact page loads successfully", async ({ page }) => {
-    const response = await page.goto(process.env.QA_URL + "/contact");
+    const response = await page.goto("./contact");
     expectSuccessfulResponse(response, "/contact");
     await expect(page).toHaveTitle(/Empower/);
   });
 
   test("TC-16 | /privacy page loads successfully", async ({ page }) => {
-    const response = await page.goto(process.env.QA_URL + "/privacy");
+    const response = await page.goto("./privacy");
     expectSuccessfulResponse(response, "/privacy");
     await expect(page).toHaveTitle(/Empower/);
   });
 
   test("TC-17 | /login-v1 page loads successfully", async ({ page }) => {
-    const response = await page.goto(process.env.QA_URL + "/login-v1");
+    const response = await page.goto("./login-v1");
     expectSuccessfulResponse(response, "/login-v1");
     await expect(page).toHaveTitle(/Login/i);
   });
