@@ -1,53 +1,37 @@
 name: Playwright Tests
 
+# Live execution against www.empower.com is intentionally excluded.
+# Automated testing of a third-party production site is not authorized, so this
+# workflow performs offline spec discovery only: it installs no browsers, runs no
+# test cases and sends no request to the target site. Live smoke and regression
+# jobs will be reinstated once an authorized test target is established.
+
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
-  smoke:
-    name: Smoke Tests (PR Gate)
-    runs-on: ubuntu-latest
-    env:
-      evn: qa
-      QA_URL: https://www.empower.com
+  static-checks:
+    name: Static Checks (offline spec discovery)
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test --grep @smoke
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: smoke-report
-          path: playwright-report/
-          retention-days: 7
 
-  regression:
-    name: Full Regression Suite
-    runs-on: ubuntu-latest
-    needs: smoke
-    env:
-      evn: qa
-      QA_URL: https://www.empower.com
-    steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: regression-report
-          path: playwright-report/
-          retention-days: 14
+
+      # `--list` parses every spec, resolves imports and page objects, and
+      # evaluates the environment switch in utilities/UITestUtils.ts. It starts
+      # no browser and performs no navigation, so the placeholder URL below is
+      # never requested. RFC 2606 reserves .invalid, which cannot resolve.
+      - name: Discover tests (parse only, no browser, no live site)
+        env:
+          evn: qa
+          QA_URL: http://localhost.invalid
+        run: npx playwright test --list --reporter=list
