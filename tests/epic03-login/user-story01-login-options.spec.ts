@@ -6,7 +6,7 @@ test.describe("EPIC-03 | Login Page | Login Options @login @smoke", () => {
   let loginPage: LoginPage;
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(process.env.QA_URL + "/login-v1");
+    await page.goto("./login-v1");
     await page.waitForLoadState("domcontentloaded");
     loginPage = new LoginPage(page);
   });
