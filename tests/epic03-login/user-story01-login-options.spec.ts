@@ -22,7 +22,10 @@ test.describe("EPIC-03 | Login Page | Login Options @login @smoke", () => {
 
   test("TC-20 | Workplace login routes to empower-retirement portal", async ({ page }) => {
     const href = await loginPage.getWorkplaceLoginHref();
-    expect(href).toContain("empower-retirement.com");
+    expect(href, "Workplace login link has no href").not.toBeNull();
+    // Compare the parsed hostname rather than a substring of the whole URL:
+    // a substring check would also accept https://attacker.example/?next=empower-retirement.com
+    expect(new URL(href!, page.url()).hostname).toMatch(/(^|\.)empower-retirement\.com$/);
   });
 
   test("TC-21 | Personal Dashboard login routes to expected portal", async ({ page }) => {
@@ -32,7 +35,8 @@ test.describe("EPIC-03 | Login Page | Login Options @login @smoke", () => {
 
   test("TC-22 | Individual account login routes to empower-retirement portal", async ({ page }) => {
     const href = await loginPage.getIndividualAccountHref();
-    expect(href).toContain("empower-retirement.com");
+    expect(href, "Individual account login link has no href").not.toBeNull();
+    expect(new URL(href!, page.url()).hostname).toMatch(/(^|\.)empower-retirement\.com$/);
   });
 
 });

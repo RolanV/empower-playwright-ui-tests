@@ -27,7 +27,9 @@ test.describe("EPIC-04 | Smoke | SEO @smoke @seo", () => {
     await page.waitForLoadState("domcontentloaded");
     const canonical = page.locator("link[rel='canonical']");
     const href = await canonical.getAttribute("href");
-    expect(href).toContain("empower.com");
+    expect(href, "Login page has no canonical href").not.toBeNull();
+    // Hostname comparison: a substring check would accept e.g. empower.com.attacker.example
+    expect(new URL(href!, page.url()).hostname).toMatch(/(^|\.)empower\.com$/);
   });
 
 });
