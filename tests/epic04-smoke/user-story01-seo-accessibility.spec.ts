@@ -70,7 +70,8 @@ test.describe("EPIC-04 | Smoke | Accessibility @smoke @accessibility", () => {
 // error format rather than a bare word, so copy such as "exceptional service",
 // "with the exception of" or "SQL Server experience" does not match.
 const ERROR_SIGNATURES: ReadonlyArray<readonly [string, RegExp]> = [
-  ["JavaScript stack frame", /\bat (?:[\w$.<>\[\]]+ \()?(?:https?:\/\/|file:\/\/|webpack:\/\/|\/)[^\s()]+\.[cm]?[jt]sx?(?:\?[^\s()]*)?:\d+:\d+\)?/],
+  // Line-anchored: engines print each frame on its own line, so "at <script-url>:1:2" inside a sentence is not a frame.
+  ["JavaScript stack frame", /^[ \t]*at (?:[\w$.<>\[\]]+ \()?(?:https?:\/\/|file:\/\/|webpack:\/\/|\/)[^\s()]+\.[cm]?[jt]sx?(?:\?[^\s()]*)?:\d+:\d+\)?/m],
   ["Java stack frame", /\bat (?:[A-Za-z_$][\w$]*\.)+[\w$<>]+\([\w$]+\.java:\d+\)/],
   [".NET stack frame", /\bat [\w.`<>\[\],]+\([^)\n]*\) in [^\n]+:line \d+/],
   ["Python traceback", /\bTraceback \(most recent call last\):/],
