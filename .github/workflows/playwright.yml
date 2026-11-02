@@ -29,6 +29,13 @@ jobs:
       - name: Type-check (tsc --noEmit)
         run: npm run typecheck
 
+      # Framework unit tests (unit/*.test.ts) run on Node's built-in test runner.
+      # They call framework functions with in-memory inputs only: no Playwright
+      # fixtures, no browser and no network. They live outside Playwright's
+      # testDir, so the inventory guard below does not count them.
+      - name: Unit-test framework logic (node --test, offline)
+        run: npm run test:unit
+
       # `--list` parses every spec, resolves imports and page objects, and
       # evaluates the environment switch in utilities/UITestUtils.ts. It starts
       # no browser and performs no navigation, so the placeholder URL below is

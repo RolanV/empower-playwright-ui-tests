@@ -15,7 +15,8 @@
     "test:accessibility": "npx playwright test --grep @accessibility",
     "test:security": "npx playwright test --grep @security",
     "report": "npx playwright show-report",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"unit/**/*.test.ts\""
   },
   "keywords": [],
   "author": "Rolan Vataev",
