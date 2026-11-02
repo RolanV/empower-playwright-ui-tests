@@ -14,7 +14,7 @@ test.describe("EPIC-03 | Login Page | Login Options @login @smoke", () => {
     await expect(loginPage.pageHeading).toBeVisible();
   });
 
-  test("TC-19 | Login page displays 5 login options", async ({ page }) => {
+  test("TC-19 | Login page displays at least 5 login options", async ({ page }) => {
     const count = await loginPage.getLoginOptionCount();
     expect(count).toBeGreaterThanOrEqual(5);
   });
