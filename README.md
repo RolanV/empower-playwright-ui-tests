@@ -1,6 +1,6 @@
 # Empower QA Automation Framework
 
-[![Playwright Tests](https://github.com/RolanV/empower-qa-automation/actions/workflows/playwright.yml/badge.svg?branch=dev)](https://github.com/RolanV/empower-qa-automation/actions/workflows/playwright.yml)
+[![Playwright Tests](https://github.com/RolanV/empower-playwright-ui-tests/actions/workflows/playwright.yml/badge.svg?branch=main)](https://github.com/RolanV/empower-playwright-ui-tests/actions/workflows/playwright.yml)
 
 A Playwright + TypeScript UI automation framework for the public pages of [empower.com](https://www.empower.com), built by **Rolan Vataev** as a QA automation portfolio project.
 
@@ -184,7 +184,7 @@ The unit tests exercise the framework's own logic, such as URL resolution and pa
 
 ## CI/CD pipeline
 
-`.github/workflows/playwright.yml` runs on pushes and pull requests targeting `main` and `dev`. Its single job, **Static Checks (offline spec discovery)**, runs on `ubuntu-24.04` with Node 24:
+`.github/workflows/playwright.yml` runs on pushes and pull requests targeting `main`. Its single job, **Static Checks (offline spec discovery)**, runs on `ubuntu-24.04` with Node 24:
 
 1. `npm ci` installs the locked dependencies.
 2. `npm run typecheck` runs `tsc --noEmit`.
