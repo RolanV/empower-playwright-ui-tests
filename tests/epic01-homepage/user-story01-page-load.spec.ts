@@ -1,12 +1,15 @@
 import { HomePage } from "../../pages/HomePage";
+import { NavigationPage } from "../../pages/NavigationPage";
 import { test, expect } from "../../utilities/UITestUtils";
 
 test.describe("EPIC-01 | Home Page | Page Load @homepage @smoke", () => {
 
   let homePage: HomePage;
+  let navPage: NavigationPage;
 
   test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
+    navPage = new NavigationPage(page);
   });
 
   test("TC-01 | Page title contains 'Empower'", async ({ page }) => {
@@ -18,15 +21,15 @@ test.describe("EPIC-01 | Home Page | Page Load @homepage @smoke", () => {
   });
 
   test("TC-03 | Login link is visible in navigation", async ({ page }) => {
-    await expect(homePage.loginLink).toBeVisible();
+    await expect(navPage.loginLink).toBeVisible();
   });
 
   test("TC-04 | 'Open an account' CTA is visible", async ({ page }) => {
-    await expect(homePage.openAccountLink).toBeVisible();
+    await expect(navPage.openAccountLink).toBeVisible();
   });
 
   test("TC-05 | Login link navigates to /login-v1", async ({ page }) => {
-    await homePage.clickLogin();
+    await navPage.clickLogin();
     await expect(page).toHaveURL(/login/);
   });
 
