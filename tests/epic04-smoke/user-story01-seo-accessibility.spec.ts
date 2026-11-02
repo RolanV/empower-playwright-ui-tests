@@ -12,14 +12,16 @@ test.describe("EPIC-04 | Smoke | SEO @smoke @seo", () => {
 
   test("TC-23 | Home page has meta description with meaningful content", async ({ page }) => {
     const content = await homePage.getMetaDescriptionContent();
-    expect(content).not.toBeNull();
-    expect(content!.length).toBeGreaterThan(50);
+    expect(content, "Home page has no meta description content").not.toBeNull();
+    // Trimmed, so leading/trailing whitespace cannot count toward the length.
+    expect(content!.trim().length, "Meta description is shorter than 51 characters once trimmed").toBeGreaterThan(50);
   });
 
   test("TC-24 | Home page has og:title set for social sharing", async ({ page }) => {
     const ogTitle = page.locator("meta[property='og:title']");
     const content = await ogTitle.getAttribute("content");
-    expect(content).toBeTruthy();
+    expect(content, "og:title has no content attribute").not.toBeNull();
+    expect(content!.trim(), "og:title content is empty or whitespace-only").not.toBe("");
   });
 
   test("TC-25 | Login page has canonical URL pointing to empower.com", async ({ page }) => {
@@ -46,6 +48,9 @@ test.describe("EPIC-04 | Smoke | Accessibility @smoke @accessibility", () => {
   });
 
   test("TC-27 | First 10 images on home page have alt attributes", async ({ page }) => {
+    // Without this, a page with no images would pass because the loop never runs.
+    // Web-first assertion: retries until an image is attached or the expect timeout ends.
+    await expect(homePage.allImages, "Home page has no <img> elements to check").not.toHaveCount(0);
     const total = await homePage.getImageCount();
     const checkCount = Math.min(total, 10);
 
@@ -56,10 +61,11 @@ test.describe("EPIC-04 | Smoke | Accessibility @smoke @accessibility", () => {
     }
   });
 
-  test("TC-28 | Login page heading is descriptive and visible", async ({ page }) => {
+  test("TC-28 | Login page heading is visible and has text", async ({ page }) => {
     await page.goto("./login-v1");
     const heading = page.locator("h1");
     await expect(heading).toBeVisible();
+    await expect(heading, "Login page h1 has no non-whitespace text").toHaveText(/\S/);
   });
 
 });
