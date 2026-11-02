@@ -2,8 +2,10 @@ name: Playwright Tests
 
 # Live execution against www.empower.com is intentionally excluded.
 # Automated testing of a third-party production site is not authorized, so this
-# workflow performs offline spec discovery only: it installs no browsers, runs no
-# test cases and sends no request to the target site. Live smoke and regression
+# workflow runs offline checks only: it type-checks the code, runs the framework
+# unit tests in unit/ (pure in-memory checks on Node's test runner) and lists the
+# Playwright UI tests without running them. It installs no browsers, executes no
+# UI test and sends no request to the target site. Live smoke and regression
 # jobs will be reinstated once an authorized test target is established.
 
 on:
@@ -30,16 +32,18 @@ jobs:
         run: npm run typecheck
 
       # Framework unit tests (unit/*.test.ts) run on Node's built-in test runner.
-      # They call framework functions with in-memory inputs only: no Playwright
-      # fixtures, no browser and no network. They live outside Playwright's
+      # They check framework code (the environment resolver and TC-31's error
+      # patterns) with in-memory inputs only: no Playwright fixtures, no browser
+      # and no network. They live outside Playwright's
       # testDir, so the inventory guard below does not count them.
       - name: Unit-test framework logic (node --test, offline)
         run: npm run test:unit
 
-      # `--list` parses every spec, resolves imports and page objects, and
-      # evaluates the environment switch in utilities/UITestUtils.ts. It starts
-      # no browser and performs no navigation, so the placeholder URL below is
-      # never requested. RFC 2606 reserves .invalid, which cannot resolve.
+      # `--list` parses every spec, resolves imports and page objects, and loads
+      # playwright.config.ts, which resolves baseURL through
+      # utilities/environment.ts. It starts no browser and performs no
+      # navigation, so the placeholder URL below is never requested. RFC 2606
+      # reserves .invalid, which cannot resolve.
       - name: Discover tests (parse only, no browser, no live site)
         env:
           evn: qa
