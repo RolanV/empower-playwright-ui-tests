@@ -24,7 +24,6 @@ test.describe("EPIC-04 | Smoke | SEO @smoke @seo", () => {
 
   test("TC-25 | Login page has canonical URL pointing to empower.com", async ({ page }) => {
     await page.goto("./login-v1");
-    await page.waitForLoadState("domcontentloaded");
     const canonical = page.locator("link[rel='canonical']");
     const href = await canonical.getAttribute("href");
     expect(href, "Login page has no canonical href").not.toBeNull();
@@ -59,7 +58,6 @@ test.describe("EPIC-04 | Smoke | Accessibility @smoke @accessibility", () => {
 
   test("TC-28 | Login page heading is descriptive and visible", async ({ page }) => {
     await page.goto("./login-v1");
-    await page.waitForLoadState("domcontentloaded");
     const heading = page.locator("h1");
     await expect(heading).toBeVisible();
   });
