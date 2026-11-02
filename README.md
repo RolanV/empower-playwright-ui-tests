@@ -196,7 +196,7 @@ The workflow does **not** install or launch a browser, run any UI test or send a
 
 ## Limitations
 
-- **No browser validation.** The UI tests have not been run against an authorized target, so there is no current evidence that they pass. Live execution is intentionally disabled until such a target exists.
+- **No browser validation.** The UI tests have not been run against an authorized target, so there is no current evidence that they pass. Browser-based UI test execution is intentionally disabled in GitHub Actions. Local UI test commands remain available but must only be run against a target the user is authorized to test.
 - **Fragile selectors.** Several locators depend on page structure and may need maintenance:
   - the header login link is the first `span` with the exact class `z-10`;
   - the footer Privacy item is the fourth `li` with a specific class list;
