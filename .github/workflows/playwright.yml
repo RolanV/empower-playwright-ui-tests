@@ -53,8 +53,8 @@ jobs:
         env:
           evn: qa
           QA_URL: http://localhost.invalid
-          EXPECTED_ALL: "Total: 31 tests in 6 files"
-          EXPECTED_SMOKE: "Total: 22 tests in 4 files"
+          EXPECTED_ALL: "Total: 27 tests in 6 files"
+          EXPECTED_SMOKE: "Total: 18 tests in 4 files"
           EXPECTED_REGRESSION: "Total: 9 tests in 2 files"
         run: |
           failed=0

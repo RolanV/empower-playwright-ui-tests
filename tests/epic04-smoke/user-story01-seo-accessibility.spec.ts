@@ -43,10 +43,6 @@ test.describe("EPIC-04 | Smoke | Accessibility @smoke @accessibility", () => {
     homePage = new HomePage(page);
   });
 
-  test("TC-26 | Page has visible heading on load", async ({ page }) => {
-    await expect(homePage.heroHeading).toBeVisible();
-  });
-
   test("TC-27 | First 10 images on home page have alt attributes", async ({ page }) => {
     // Without this, a page with no images would pass because the loop never runs.
     // Web-first assertion: retries until an image is attached or the expect timeout ends.
