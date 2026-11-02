@@ -21,7 +21,6 @@
   "author": "Rolan Vataev",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.56.0",
     "@types/node": "^24.7.0",
     "dotenv": "^17.2.3",

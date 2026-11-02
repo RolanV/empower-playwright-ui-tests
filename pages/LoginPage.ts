@@ -9,8 +9,6 @@ export class LoginPage extends BasePage {
   public readonly workplaceLoginBtn = this.locator("a:has-text('Log in')").nth(0);
   public readonly personalDashboardBtn = this.locator("a:has-text('Log in')",).nth(1);
   public readonly individualAccountBtn = this.locator("a:has-text('Log in')",).nth(2);
-  public readonly planSponsorBtn = this.locator("a:has-text('Log in')").nth(3);
-  public readonly financialProfBtn = this.locator("a:has-text('Log in')").nth(4);
 
   // Page Actions:
   public async getLoginOptionCount(): Promise<number> {
