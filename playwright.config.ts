@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { resolveBaseURL } from './utilities/environment';
 
 dotenv.config();
 
@@ -11,14 +12,14 @@ export default defineConfig({
   workers: 4,
   reporter: 'html',
   use: {
+    // Selected by evn (qa | stg | uat) from QA_URL, STG_URL or UAT_URL.
+    baseURL: resolveBaseURL(process.env),
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    // Empower.com uses bot detection — these headers make requests look like a real browser
     extraHTTPHeaders: {
       'Accept-Language': 'en-US,en;q=0.9',
     },
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
   },
 
   projects: [

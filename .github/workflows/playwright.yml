@@ -1,53 +1,79 @@
 name: Playwright Tests
 
+# Live execution against www.empower.com is intentionally excluded.
+# Automated testing of a third-party production site is not authorized, so this
+# workflow runs offline checks only: it type-checks the code, runs the framework
+# unit tests in unit/ (pure in-memory checks on Node's test runner) and lists the
+# Playwright UI tests without running them. It installs no browsers, executes no
+# UI test and sends no request to the target site. Live smoke and regression
+# jobs will be reinstated once an authorized test target is established.
+
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
-  smoke:
-    name: Smoke Tests (PR Gate)
-    runs-on: ubuntu-latest
-    env:
-      evn: qa
-      QA_URL: https://www.empower.com
+  static-checks:
+    name: Static Checks (offline spec discovery)
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test --grep @smoke
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: smoke-report
-          path: playwright-report/
-          retention-days: 7
+      - uses: actions/checkout@v7
 
-  regression:
-    name: Full Regression Suite
-    runs-on: ubuntu-latest
-    needs: smoke
-    env:
-      evn: qa
-      QA_URL: https://www.empower.com
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
+
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: regression-report
-          path: playwright-report/
-          retention-days: 14
+
+      - name: Type-check (tsc --noEmit)
+        run: npm run typecheck
+
+      # Framework unit tests (unit/*.test.ts) run on Node's built-in test runner.
+      # They check framework code (the environment resolver and TC-31's error
+      # patterns) with in-memory inputs only: no Playwright fixtures, no browser
+      # and no network. They live outside Playwright's
+      # testDir, so the inventory guard below does not count them.
+      - name: Unit-test framework logic (node --test, offline)
+        run: npm run test:unit
+
+      # `--list` parses every spec, resolves imports and page objects, and loads
+      # playwright.config.ts, which resolves baseURL through
+      # utilities/environment.ts. It starts no browser and performs no
+      # navigation, so the placeholder URL below is never requested. RFC 2606
+      # reserves .invalid, which cannot resolve.
+      - name: Discover tests (parse only, no browser, no live site)
+        env:
+          evn: qa
+          QA_URL: http://localhost.invalid
+        run: npx playwright test --list --reporter=list
+
+      # Fails if test coverage changes unexpectedly, e.g. a spec stops loading or
+      # a tag is dropped. When tests are added or removed on purpose, update the
+      # EXPECTED_* values below in the same commit.
+      - name: Guard test inventory
+        env:
+          evn: qa
+          QA_URL: http://localhost.invalid
+          EXPECTED_ALL: "Total: 27 tests in 6 files"
+          EXPECTED_SMOKE: "Total: 18 tests in 4 files"
+          EXPECTED_REGRESSION: "Total: 9 tests in 2 files"
+        run: |
+          failed=0
+          check() {
+            local label="$1" expected="$2"; shift 2
+            local actual
+            actual=$(npx playwright test --list --reporter=list "$@" | grep '^Total: ' || true)
+            if [ "$actual" = "$expected" ]; then
+              echo "$label: $actual"
+            else
+              echo "::error::$label inventory changed. Expected '$expected', got '${actual:-no tests found}'"
+              failed=1
+            fi
+          }
+          check "All tests"   "$EXPECTED_ALL"
+          check "@smoke"      "$EXPECTED_SMOKE"      --grep @smoke
+          check "@regression" "$EXPECTED_REGRESSION" --grep @regression
+          exit "$failed"

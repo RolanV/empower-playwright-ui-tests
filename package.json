@@ -14,15 +14,17 @@
     "test:login": "npx playwright test --grep @login",
     "test:accessibility": "npx playwright test --grep @accessibility",
     "test:security": "npx playwright test --grep @security",
-    "report": "npx playwright show-report"
+    "report": "npx playwright show-report",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"unit/**/*.test.ts\""
   },
   "keywords": [],
   "author": "Rolan Vataev",
   "license": "ISC",
   "devDependencies": {
-    "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.56.0",
     "@types/node": "^24.7.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "typescript": "^7.0.2"
   }
 }
